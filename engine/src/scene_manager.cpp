@@ -12,16 +12,24 @@ void SceneManager::registerScene(std::unique_ptr<Scene> scene) {
   this->activeScene = std::move(scene);
 }
 
-void SceneManager::onAttachActiveScene() { this->activeScene->onAttach(); }
-
-void SceneManager::onUpdateActiveScene() { this->activeScene->onUpdate(); }
-
-void SceneManager::onRenderActiveScene() { this->activeScene->onRender(); }
-
-void SceneManager::onImGuiRenderActiveScene() {
-  this->activeScene->onImGuiRender();
+void SceneManager::onAttachActiveScene() {
+  if (this->activeScene) { this->activeScene->onAttach(); }
 }
 
-void SceneManager::onDetachActiveScene() { this->activeScene->onDetach(); }
+void SceneManager::onUpdateActiveScene() {
+  if (this->activeScene) { this->activeScene->onUpdate(); }
+}
+
+void SceneManager::onRenderActiveScene() {
+  if (this->activeScene) { this->activeScene->onRender(); }
+}
+
+void SceneManager::onImGuiRenderActiveScene() {
+  if (this->activeScene) { this->activeScene->onImGuiRender(); }
+}
+
+void SceneManager::onDetachActiveScene() {
+  if (this->activeScene) { this->activeScene->onDetach(); }
+}
 
 }  // namespace alp

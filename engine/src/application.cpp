@@ -78,6 +78,8 @@ void Application::onEvent(KeyReleasedEvent& event) {
 }
 
 void Application::registerScene(std::unique_ptr<Scene> scene) {
+  scene->setDevice(&this->device);
+  scene->initialize(this->renderer.getSwapChainRenderPass());
   this->sceneManager.registerScene(std::move(scene));
 }
 

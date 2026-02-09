@@ -1,10 +1,16 @@
 #pragma once
 
-#include <entt/entt.hpp>
+#include "device.hpp"
+#include "frame_info.hpp"
+#include "model.hpp"
+#include "pipeline.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <entt/entt.hpp>
 #include <glm/glm.hpp>
+#include <memory>
+#include <vulkan/vulkan.hpp>
 
 namespace alp {
 
@@ -19,19 +25,42 @@ class Scene {
   Scene(const Scene&) = delete;
   Scene& operator=(const Scene&) = delete;
 
-  Scene() = default;
-  ~Scene() = default;
+  struct PushConstantData {
+    glm::mat4 transform;
+    glm::vec4 color;
+  };
 
-  virtual void onAttach();
-  virtual void onUpdate();
-  virtual void onRender();
-  virtual void onImGuiRender();
+  Scene() = default;
+  virtual ~Scene();
+
+  virtual void onAttach() {}
+  virtual void onUpdate() {}
+  virtual void onImGuiRender() {}
   virtual void onDetach();
+
+  void setDevice(Device* device);
+
+  void initialize(vk::RenderPass renderPass);
+
+  void onRender(vk::CommandBuffer commandBuffer, FrameInfo frameInfo);
+
+  const entt::registry& getRegistry() const { return this->registry; }
 
   void createQuad(glm::vec2 position, float width, float height);
 
  private:
+  void createPipelineLayout();
+  void createPipeline(vk::RenderPass renderPass);
+
+  PushConstantData pushConstant;
+
+  Device* device = nullptr;
+  std::unique_ptr<Pipeline> pipeline;
+  vk::PipelineLayout pipelineLayout;
+
   entt::registry registry;
+
+  std::unique_ptr<Model> quadModel;  // TEMP
 };
 
 }  // namespace alp
